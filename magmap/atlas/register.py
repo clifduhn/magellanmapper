@@ -1858,12 +1858,12 @@ def main():
                 max_level=config.labels_level, combine_sides=combine_sides)
 
     elif reg is config.RegisterTypes.MAKE_DENSITY_IMAGES:
-        # make density images
+        # make density images from blobs
         size = config.roi_sizes
         if size: size = size[0][::-1]
         export_regions.make_density_images_mp(
             config.filenames, config.transform[config.Transforms.RESCALE],
-            size, config.suffix)
+            size, config.suffix, config.channel)
     
     elif reg is config.RegisterTypes.MAKE_SUBSEGS:
         # make sub-segmentations for all images
