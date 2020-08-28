@@ -1702,7 +1702,7 @@ class Visualization(HasTraits):
         """Detect blobs when triggered by a button."""
         self.detect_blobs()
     
-    def detect_blobs(self, segs=None):
+    def detect_blobs(self, segs=None, blob_matches=None):
         """Detect blobs within the current ROI.
         
         Args:
@@ -1710,12 +1710,15 @@ class Visualization(HasTraits):
                 from a database. Defaults to None, in which case blobs will
                 be taken from a :attr:`config.blobs` if available or detected
                 directly from the image.
+            blob_matches (List[:obj:`sqlite.BlobMatch`): Sequence of blob
+                matches; defaults to None.
 
         """
         if config.image5d is None:
             print("Main image has not been loaded, cannot show detect blobs")
             return
         self._reset_segments()
+        self.blobs.blob_matches = blob_matches
         cli.update_profiles()
         
         # process ROI in prep for showing filtered 2D view and segmenting
@@ -2099,8 +2102,10 @@ class Visualization(HasTraits):
                 chls = np.unique(detector.get_blobs_channel(blobs))
                 if len(chls) == 1:
                     self._channel = [str(int(chls[0]))]
-            self.blobs.blob_matches = config.db.select_blob_matches(roi_id)
-            self._blob_detection_fired(segs=blobs)
+            
+            # get matches between blobs, such as verifications
+            blob_matches = config.db.select_blob_matches(roi_id)
+            self.detect_blobs(segs=blobs, blob_matches=blob_matches)
             roi_editor.verify = True
         else:
             print("no roi found")
