@@ -435,6 +435,7 @@ class ABAKeys(Enum):
     LEVEL = "st_level"
     CHILDREN = "children"
     ACRONYM = "acronym"
+    PARENT_ID = "parent_structure_id"
 
 
 # register module modes when called from command-line
